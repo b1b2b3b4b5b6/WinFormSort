@@ -1,0 +1,31 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio 15
+VisualStudioVersion = 15.0.27428.2015
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "WinFormSort", "WinFormSort\WinFormSort.csproj", "{CF569F82-574F-4618-91B7-AE4FA6682CEA}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "RouteDIRECTOR", "RouteDIRECTOR\RouteDIRECTOR.csproj", "{0E15C94D-EFAA-4DB0-8AEC-9B5F32B54D76}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{CF569F82-574F-4618-91B7-AE4FA6682CEA}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{CF569F82-574F-4618-91B7-AE4FA6682CEA}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{CF569F82-574F-4618-91B7-AE4FA6682CEA}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{CF569F82-574F-4618-91B7-AE4FA6682CEA}.Release|Any CPU.Build.0 = Release|Any CPU
+		{0E15C94D-EFAA-4DB0-8AEC-9B5F32B54D76}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{0E15C94D-EFAA-4DB0-8AEC-9B5F32B54D76}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{0E15C94D-EFAA-4DB0-8AEC-9B5F32B54D76}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{0E15C94D-EFAA-4DB0-8AEC-9B5F32B54D76}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {B3C736D1-E135-4931-BE3D-12F5C76AA3B5}
+	EndGlobalSection
+EndGlobal
