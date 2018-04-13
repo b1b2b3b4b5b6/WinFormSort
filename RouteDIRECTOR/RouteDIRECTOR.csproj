@@ -55,7 +55,6 @@
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="RouteDirector\Communication\TCPSocket.cs" />
     <Compile Include="RouteDirector\PcaketProcess\PacketAnalyze.cs" />
-    <Compile Include="RouteDirector\PcaketProcess\PacketBuild.cs" />
     <Compile Include="RouteDirector\RouteDirectControl.cs" />
     <EmbeddedResource Include="Form1.resx">
       <DependentUpon>Form1.cs</DependentUpon>
