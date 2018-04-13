@@ -15,7 +15,6 @@ namespace RouteDIRECTOR.RouteDirectorControl
 	{
 		byte[] packet = new byte[240];
 		byte[,] messageList = new byte [20,240];
-		int messageNum;
 		Thread receiveThread;
 		TCPSocket tcpSocket;
 

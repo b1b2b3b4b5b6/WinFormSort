@@ -3,11 +3,8 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-
 using System.Net.Sockets;
 using System.Net;
-
-
 using System.Threading;
 using RouteDIRECTOR.RouteDirectorControl;
 using System.Collections;
@@ -54,7 +51,6 @@ namespace RouteDirector.TcpSocket
 			}
 			catch
 			{
-
 			}
 		}
 
@@ -67,7 +63,8 @@ namespace RouteDirector.TcpSocket
 				{
 					byte[] buf = new byte[240 * 2];
 					len = clientSocket.Receive(buf);
-					packetQueue.Enqueue(buf);
+					if(len != 0)
+						packetQueue.Enqueue(buf);
 				}
 
 				catch
@@ -77,6 +74,18 @@ namespace RouteDirector.TcpSocket
 	
 			}
 			
+		}
+
+		public int SendData(byte[] data)
+		{
+			try
+			{
+				int len = clientSocket.Send(data);
+				return len;
+			}
+			catch
+			{ }
+			return -1;
 		}
 	}
 }
