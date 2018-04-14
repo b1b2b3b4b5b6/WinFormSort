@@ -5,7 +5,7 @@ using System.Net;
 using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
-using RouteDirector.PacketProcess;
+using RouteDirector.PacketProcessor;
 using RouteDirector.TcpSocket;
 
 namespace RouteDIRECTOR.RouteDirectorControl
@@ -52,9 +52,9 @@ namespace RouteDIRECTOR.RouteDirectorControl
 			tcpSocket.DisconnectServer();
 		}
 
-		int GetMessage()
+		int GetMessage(byte[] packet)
 		{
-
+			
 			return 0;
 		}
 	}

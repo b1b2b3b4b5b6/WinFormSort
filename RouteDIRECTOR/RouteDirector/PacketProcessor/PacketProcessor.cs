@@ -4,10 +4,12 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace RouteDirector.PacketProcess
+namespace RouteDirector.PacketProcessor
 {
-	class PacketProcess
+	class PacketProcessor
 	{
+		public PacketProcessor() { }
 
+		
 	}
 }
