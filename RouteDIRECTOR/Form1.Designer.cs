@@ -61,7 +61,7 @@
 			this.txtIp.Name = "txtIp";
 			this.txtIp.Size = new System.Drawing.Size(177, 21);
 			this.txtIp.TabIndex = 2;
-			this.txtIp.Text = "172.16.18.171";
+			this.txtIp.Text = "192.168.10.1";
 			// 
 			// txtPort
 			// 
@@ -69,7 +69,7 @@
 			this.txtPort.Name = "txtPort";
 			this.txtPort.Size = new System.Drawing.Size(177, 21);
 			this.txtPort.TabIndex = 3;
-			this.txtPort.Text = "3000";
+			this.txtPort.Text = "80";
 			// 
 			// lblConnectStatus
 			// 

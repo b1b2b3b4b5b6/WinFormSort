@@ -5,7 +5,7 @@
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
     <ProjectGuid>{0E15C94D-EFAA-4DB0-8AEC-9B5F32B54D76}</ProjectGuid>
-    <OutputType>WinExe</OutputType>
+    <OutputType>Exe</OutputType>
     <RootNamespace>RouteDIRECTOR</RootNamespace>
     <AssemblyName>RouteDIRECTOR</AssemblyName>
     <TargetFrameworkVersion>v4.6.1</TargetFrameworkVersion>
@@ -31,6 +31,9 @@
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
+  <PropertyGroup>
+    <StartupObject />
+  </PropertyGroup>
   <ItemGroup>
     <Reference Include="System" />
     <Reference Include="System.Core" />
@@ -54,8 +57,10 @@
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="RouteDirector\Communication\TCPSocket.cs" />
+    <Compile Include="RouteDirector\PcaketProcess\Packet\Packet.cs" />
     <Compile Include="RouteDirector\PcaketProcess\PacketProcessor.cs" />
     <Compile Include="RouteDirector\RouteDirectControl.cs" />
+    <Compile Include="RouteDirector\Utility\DataConversion.cs" />
     <EmbeddedResource Include="Form1.resx">
       <DependentUpon>Form1.cs</DependentUpon>
     </EmbeddedResource>
@@ -83,6 +88,9 @@
       <SubType>Designer</SubType>
     </None>
   </ItemGroup>
-  <ItemGroup />
+  <ItemGroup>
+    <Folder Include="RouteDirector\PcaketProcess\Packet\MessageReceive\" />
+    <Folder Include="RouteDirector\PcaketProcess\Packet\MessageSend\" />
+  </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

@@ -1,20 +1,13 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using System.Net.Sockets;
 using System.Net;
-using System.Threading;
-using RouteDIRECTOR.RouteDirectorControl;
-using System.Collections;
+using System.Net.Sockets;
 
 namespace RouteDirector.TcpSocket
 {
 	class TCPSocket
 	{
 		private Socket clientSocket;
-		public Queue packetQueue = new Queue();
+		
 		public bool ConnectStatus { set; get; }
 		public TCPSocket() {
 			ConnectStatus = false;
@@ -54,26 +47,22 @@ namespace RouteDirector.TcpSocket
 			}
 		}
 
-		public void ReceiveData()
+		public byte[] ReceiveData()
 		{
 			int len;
-			while (true)
+			try
 			{
-				try
-				{
-					byte[] buf = new byte[240 * 2];
-					len = clientSocket.Receive(buf);
-					if(len != 0)
-						packetQueue.Enqueue(buf);
-				}
-
-				catch
-				{
-					//throw;
-				}
-	
+				byte[] buf = new byte[240 * 2];
+				len = clientSocket.Receive(buf);
+				if (len != 0)
+					return buf;
 			}
-			
+
+			catch
+			{
+				//throw;
+			}
+			return null;
 		}
 
 		public int SendData(byte[] data)

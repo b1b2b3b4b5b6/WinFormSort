@@ -1,25 +1,25 @@
 ﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using System.Net;
 using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
-using RouteDirector.PacketProcessor;
+using RouteDirector.PacketProcess;
 using RouteDirector.TcpSocket;
 
-namespace RouteDIRECTOR.RouteDirectorControl
+namespace RouteDirector
 {
-	public class RouteDirectControl
+	public class RouteDirectControl 
 	{
-		byte[] packet = new byte[240];
-		byte[,] messageList = new byte [20,240];
+		public Queue messageQueue = new Queue();
 		Thread receiveThread;
 		TCPSocket tcpSocket;
 
 		public RouteDirectControl() {
 			tcpSocket = new TCPSocket();
-			receiveThread = new Thread(tcpSocket.ReceiveData) { IsBackground = true };
+			receiveThread = new Thread(ReceiveHandle) { IsBackground = true };
 		}
 		public void BeginWork(byte[] arr)
 		{
@@ -33,29 +33,39 @@ namespace RouteDIRECTOR.RouteDirectorControl
 
 			if (tcpSocket.ConnectServer(ipe) == 0)
 			{
-				
 				receiveThread.Start();
-
 				return 0;
 			}
-			else
-			{
-			}
-	
 			return -1;
 		}
 
 		public void StopConnection()
 		{
 			receiveThread.Abort();
-			receiveThread = new Thread(tcpSocket.ReceiveData) { IsBackground = true };
+			//缺少对receive是否完成的判断
+			receiveThread = new Thread(ReceiveHandle) { IsBackground = true };
 			tcpSocket.DisconnectServer();
 		}
 
-		int GetMessage(byte[] packet)
+		private void ReceiveHandle()
 		{
-			
-			return 0;
+			while (true)
+			{
+				byte[] packet;
+				packet = tcpSocket.ReceiveData();
+				if (packet != null)
+				{
+					//开启新task来处理接收的最新报文
+					Task task = new Task(() => { PacketAnalyze(packet); });
+					task.Start();
+				}
+			}
+
+		}
+		private void PacketAnalyze(byte[] packet)
+		{
+			PacketProcessor packetProcessor = new PacketProcessor(packet);
+			packetProcessor.GetMessage(messageQueue);
 		}
 	}
 }
