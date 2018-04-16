@@ -14,23 +14,23 @@ namespace RouteDirector.Utility
 		/// </summary>
 		/// <param name="structObj">要转换的结构体</param>
 		/// <returns>转换后的byte数组</returns>
-		public static byte[] StructToBytes(object structObj)
-		{
-			//得到结构体的大小
-			int size = Marshal.SizeOf(structObj);
-			//创建byte数组
-			byte[] bytes = new byte[size];
-			//分配结构体大小的内存空间
-			IntPtr structPtr = Marshal.AllocHGlobal(size);
-			//将结构体拷到分配好的内存空间
-			Marshal.StructureToPtr(structObj, structPtr, false);
-			//从内存空间拷到byte数组
-			Marshal.Copy(structPtr, bytes, 0, size);
-			//释放内存空间
-			Marshal.FreeHGlobal(structPtr);
-			//返回byte数组
-			return bytes;
-		}
+		//public static byte[] StructToBytes(object structObj)
+		//{
+		//	//得到结构体的大小
+		//	int size = Marshal.SizeOf(structObj);
+		//	//创建byte数组
+		//	byte[] bytes = new byte[size];
+		//	//分配结构体大小的内存空间
+		//	IntPtr structPtr = Marshal.AllocHGlobal(size);
+		//	//将结构体拷到分配好的内存空间
+		//	Marshal.StructureToPtr(structObj, structPtr, false);
+		//	//从内存空间拷到byte数组
+		//	Marshal.Copy(structPtr, bytes, 0, size);
+		//	//释放内存空间
+		//	Marshal.FreeHGlobal(structPtr);
+		//	//返回byte数组
+		//	return bytes;
+		//}
 
 		/// <summary>
 		/// byte数组转结构体
@@ -38,27 +38,27 @@ namespace RouteDirector.Utility
 		/// <param name="bytes">byte数组</param>
 		/// <param name="type">结构体类型</param>
 		/// <returns>转换后的结构体</returns>
-		public static object BytesToStuct(byte[] bytes, Type type)
-		{
-			//得到结构体的大小
-			int size = Marshal.SizeOf(type);
-			//byte数组长度必须大于结构体的大小
-			if ( bytes.Length < size)
-			{
-				//返回空
-				return null;
-			}
-			//分配结构体大小的内存空间
-			IntPtr structPtr = Marshal.AllocHGlobal(size);
-			//将byte数组拷到分配好的内存空间
-			Marshal.Copy(bytes, 0, structPtr, size);
-			//将内存空间转换为目标结构体
-			object obj = Marshal.PtrToStructure(structPtr, type);
-			//释放内存空间
-			Marshal.FreeHGlobal(structPtr);
-			//返回结构体
-			return obj;
-		}
+		//public static object BytesToStuct(byte[] bytes, Type type)
+		//{
+		//	//得到结构体的大小
+		//	int size = Marshal.SizeOf(type);
+		//	//byte数组长度必须大于结构体的大小
+		//	if (bytes.Length < size)
+		//	{
+		//		//返回空
+		//		return null;
+		//	}
+		//	//分配结构体大小的内存空间
+		//	IntPtr structPtr = Marshal.AllocHGlobal(size);
+		//	//将byte数组拷到分配好的内存空间
+		//	Marshal.Copy(bytes, 0, structPtr, size);
+		//	//将内存空间转换为目标结构体
+		//	object obj = Marshal.PtrToStructure(structPtr, type);
+		//	//释放内存空间
+		//	Marshal.FreeHGlobal(structPtr);
+		//	//返回结构体
+		//	return obj;
+		//}
 
 		/// <summary>
 		/// byte数组转数值
@@ -86,63 +86,63 @@ namespace RouteDirector.Utility
 			{
 				len = sizeof(char);
 				getBuf();
-				return (T)(object)BitConverter.ToChar(buf, offset);
+				return (T)(object)BitConverter.ToChar(buf, 0);
 			}
 
 			if (res is Int16)
 			{
 				len = sizeof(Int16);
 				getBuf();
-				return (T)(object)BitConverter.ToInt16(buf, offset);
+				return (T)(object)BitConverter.ToInt16(buf, 0);
 			}
 
 			if (res is Int32)
 			{
 				len = sizeof(Int32);
 				getBuf();
-				return (T)(object)BitConverter.ToInt32(buf, offset);
+				return (T)(object)BitConverter.ToInt32(buf, 0);
 			}
 
 			if (res is Int64)
 			{
 				len = sizeof(Int64);
 				getBuf();
-				return (T)(object)BitConverter.ToInt64(buf, offset);
+				return (T)(object)BitConverter.ToInt64(buf, 0);
 			}
 
 			if (res is UInt16)
 			{
 				len = sizeof(UInt16);
 				getBuf();
-				return (T)(object)BitConverter.ToUInt16(buf, offset);
+				return (T)(object)BitConverter.ToUInt16(buf, 0);
 			}
 
 			if (res is UInt32)
 			{
 				len = sizeof(UInt32);
 				getBuf();
-				return (T)(object)BitConverter.ToUInt32(buf, offset);
+				return (T)(object)BitConverter.ToUInt32(buf, 0);
 			}
 
 			if (res is UInt64)
 			{
 				len = sizeof(UInt64);
 				getBuf();
-				return (T)(object)BitConverter.ToUInt64(buf, offset);
+				return (T)(object)BitConverter.ToUInt64(buf, 0);
 			}
 
 			if (res is Single)
 			{
 				len = sizeof(Single);
 				getBuf();
-				return (T)(object)BitConverter.ToSingle(buf, offset);
+				return (T)(object)BitConverter.ToSingle(buf, 0);
 			}
 
 			if (res is Double)
 			{
 				len = sizeof(Double);
 				getBuf();
-				return (T)(object)BitConverter.ToDouble(buf, offset);
+				return (T)(object)BitConverter.ToDouble(buf, 0);
 			}
 			
 			return (T)(object)0;
@@ -163,7 +163,7 @@ namespace RouteDirector.Utility
 			Array.Copy(src, offset, buf, 0, len);
 			if (BitConverter.IsLittleEndian != srcIsLittleEndian)
 				Array.Reverse(buf, 0, len);
-			num = BitConverter.ToChar(buf, offset);
+			num = BitConverter.ToChar(buf, 0);
 			return len;
 		}
 
@@ -182,7 +182,7 @@ namespace RouteDirector.Utility
 			Array.Copy(src, offset, buf, 0, len);
 			if (BitConverter.IsLittleEndian != srcIsLittleEndian)
 				Array.Reverse(buf, 0, len);
-			num = BitConverter.ToInt16(buf, offset);
+			num = BitConverter.ToInt16(buf, 0);
 			return len;
 		}
 
@@ -201,7 +201,7 @@ namespace RouteDirector.Utility
 			Array.Copy(src, offset, buf, 0, len);
 			if (BitConverter.IsLittleEndian != srcIsLittleEndian)
 				Array.Reverse(buf, 0, len);
-			num = BitConverter.ToInt32(buf, offset);
+			num = BitConverter.ToInt32(buf, 0);
 			return len;
 		}
 
@@ -220,7 +220,7 @@ namespace RouteDirector.Utility
 			Array.Copy(src, offset, buf, 0, len);
 			if (BitConverter.IsLittleEndian != srcIsLittleEndian)
 				Array.Reverse(buf, 0, len);
-			num = BitConverter.ToInt64(buf, offset);
+			num = BitConverter.ToInt64(buf, 0);
 			return len;
 		}
 
@@ -239,7 +239,7 @@ namespace RouteDirector.Utility
 			Array.Copy(src, offset, buf, 0, len);
 			if (BitConverter.IsLittleEndian != srcIsLittleEndian)
 				Array.Reverse(buf, 0, len);
-			num = BitConverter.ToUInt16(buf, offset);
+			num = BitConverter.ToUInt16(buf, 0);
 			return len;
 		}
 
@@ -258,7 +258,7 @@ namespace RouteDirector.Utility
 			Array.Copy(src, offset, buf, 0, len);
 			if (BitConverter.IsLittleEndian != srcIsLittleEndian)
 				Array.Reverse(buf, 0, len);
-			num = BitConverter.ToUInt32(buf, offset);
+			num = BitConverter.ToUInt32(buf, 0);
 			return len;
 		}
 
@@ -277,7 +277,7 @@ namespace RouteDirector.Utility
 			Array.Copy(src, offset, buf, 0, len);
 			if (BitConverter.IsLittleEndian != srcIsLittleEndian)
 				Array.Reverse(buf, 0, len);
-			num = BitConverter.ToUInt64(buf, offset);
+			num = BitConverter.ToUInt64(buf, 0);
 			return len;
 		}
 

@@ -18,17 +18,24 @@ namespace RouteDirector.PacketProcess
 		public Int16 transportError;
 
 
-		byte[] messageBuf = new byte[240];
-		static public uint terminator = 0xffffffff;
-		public int terminatorOffset;
+		byte[] messageBuf;
+		//static public uint terminator = 0xffffffff;
+		//public int terminatorOffset;
 
-		byte[] padding;
-		byte[] packet = new byte[packetMaxLength];
+		//byte[] padding;
+		byte[] packet;
 
 		public Packet(byte[] buf)
 		{
-			Array.Copy(buf, packet, packetMaxLength);
-
+			int offset = 0;
+			if (buf.Length > packetMaxLength)
+				return;
+			Array.Copy(buf, packet, buf.Length);
+			offset += DataConversion.ByteToNum(buf, offset, ref cycleNum, false);
+			offset += DataConversion.ByteToNum(buf, offset, ref senderId, false);
+			offset += DataConversion.ByteToNum(buf, offset, ref receiverId, false);
+			offset += DataConversion.ByteToNum(buf, offset, ref ack, false);
+			offset += DataConversion.ByteToNum(buf, offset, ref transportError, false);
 		}
 
 		public Packet()
