@@ -52,7 +52,7 @@ namespace RouteDirector.TcpSocket
 			int len;
 			try
 			{
-				byte[] buf = new byte[240 * 2];
+				byte[] buf = new byte[240];
 				len = clientSocket.Receive(buf);
 				if (len != 0)
 					return buf;
@@ -60,21 +60,23 @@ namespace RouteDirector.TcpSocket
 
 			catch
 			{
-				//throw;
+				throw;
 			}
 			return null;
 		}
 
 		public int SendData(byte[] data)
 		{
+			int len;
 			try
 			{
-				int len = clientSocket.Send(data);
-				return len;
+				len = clientSocket.Send(data);
 			}
 			catch
-			{ }
-			return -1;
+			{
+				throw;
+			}
+			return len;
 		}
 	}
 }

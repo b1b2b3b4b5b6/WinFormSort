@@ -11,6 +11,7 @@ namespace RouteDirector.PacketProcess
 	{
 		public enum MessageType : Int16
 		{
+			NoType = 0,
 			DivertReq = 1,
 			DivertCmd = 2,
 			DivertRes = 3,
@@ -18,52 +19,25 @@ namespace RouteDirector.PacketProcess
 			NodeAva = 11,
 			CommsErr = 12,
 		}
-
-		public object message;
-		public byte[] messageBuf;
+		public byte[] msgBuf;
 		public Int16 msgId;
 
-		public MessageBase() { }
-		public MessageBase(byte[] buf, ref int offset)
+		public MessageBase()
 		{
-			DataConversion.ByteToNum(buf, offset, ref msgId, false);
-			switch (msgId)
-			{
-				case (Int16)MessageType.DivertReq:
-					message = new DivertReq(buf, offset);
-					offset += DivertReq.len;
-					break;
-
-				case (Int16)MessageType.DivertCmd:
-					message = new DivertCmd(buf, offset);
-					offset += DivertCmd.len;
-					break;
-
-				case (Int16)MessageType.DivertRes:
-					message = new DivertRes(buf, offset);
-					offset += DivertRes.len;
-					break;
-
-				case (Int16)MessageType.HeartBeat:
-					message = new HeartBeat(buf, offset);
-					offset += HeartBeat.len;
-					break;
-
-				case (Int16)MessageType.NodeAva:
-					message = new NodeAva(buf, offset);
-					offset += NodeAva.len;
-					break;
-
-				case (Int16)MessageType.CommsErr:
-					message = new CommsErr(buf, offset);
-					offset += CommsErr.len;
-					break;
-
-				default:
-					throw new NotImplementedException();
-					break;
-			}
+			msgId = (Int16)MessageType.NoType;
 		}
+
+		public MessageBase(Int16 tMsgId)
+		{
+			msgId = tMsgId;
+		}
+
+		/// <summary>
+		/// 解析消息数组至单个消息对象
+		/// </summary>
+		/// <param name="buf">消息数组</param>
+		/// <param name="offset">偏移量引用</param>
+		/// <returns>消息对象</returns>
 		static public MessageBase MessageCreate(byte[] buf, ref int offset)
 		{
 			Int16 tMsgId = 0;
@@ -76,39 +50,46 @@ namespace RouteDirector.PacketProcess
 					offset += DivertReq.len;
 					break;
 
+				case (Int16)MessageType.DivertRes:
+					messageBase = new DivertRes(buf, offset);
+					offset += DivertRes.len;
+					break;
+
+				case (Int16)MessageType.HeartBeat:
+					messageBase = new HeartBeat(buf, offset);
+					offset += HeartBeat.len;
+					break;
+
+				case (Int16)MessageType.NodeAva:
+					messageBase = new NodeAva(buf, offset);
+					offset += NodeAva.len;
+					break;
+
+				case (Int16)MessageType.CommsErr:
+					messageBase = new CommsErr(buf, offset);
+					offset += CommsErr.len;
+					break;
 				default:
 					throw new NotImplementedException();
 					break;
 			}
-			return null;
+			return messageBase;
 		}
-		public MessageBase(object msg)
+
+		/// <summary>
+		/// 打印消息的参数信息
+		/// </summary>
+		/// <param name="str">StringBuilder引用</param>
+		/// <returns>StringBuilder引用</returns>
+		public virtual StringBuilder GetInfo(StringBuilder str)
 		{
-			message = null;
-
-			if (msg is DivertCmd)
-			{
-				msgId = (Int16)MessageType.DivertCmd;
-				message = msg;
-				messageBuf = ((DivertCmd)message).message;
-			}
-
-			if (msg is HeartBeat)
-			{
-				msgId = (Int16)MessageType.HeartBeat;
-				message = msg;
-				messageBuf = ((HeartBeat)message).message;
-			}
-
-			if (message == null)
-				throw new NotImplementedException();
+			Func<Int16, String> GetName = ((value) => {
+				return Enum.GetName(typeof(MessageType), value);
+			});
+			str.AppendLine("*************Message*************");
+			str.AppendLine("Message type : " + GetName(msgId));
+			str.AppendLine("Message length : " + msgBuf.Length.ToString());
+			return str;
 		}
-
-		public virtual void Pack(byte[] tMsgBuf)
-		{
-			messageBuf = tMsgBuf;
-		}
-
-		public virtual void UnPack() { }
 	}
 }

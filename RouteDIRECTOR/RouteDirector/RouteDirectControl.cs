@@ -51,27 +51,32 @@ namespace RouteDirector
 			while (true)
 			{
 				byte[] packetBuf;
+				Console.WriteLine("try receive");
 				packetBuf = tcpSocket.ReceiveData();
+				Console.WriteLine("receive complete");
 				if (packetBuf != null)
 				{
 					//开启新task来处理接收的最新报文
 					Task task = new Task(() => { PacketAnalyze(packetBuf); });
 					task.Start();
 				}
+				else
+					Console.WriteLine("receive null packet");
 			}
 		}
 
 		private void PacketAnalyze(byte[] tPacket)
 		{
+			Console.WriteLine("get packet length = " + tPacket.Length.ToString());
 			Packet packet = new Packet(tPacket);
-			Console.WriteLine("get packet");
+			StringBuilder str = new StringBuilder();
+			Console.Write(packet.GetInfo(str));
 		}
 
 		public void SendPacket(byte[] buf)
 		{
-			tcpSocket.SendData(buf);
-			Console.WriteLine("get packet");
+			int len = tcpSocket.SendData(buf);
+			Console.WriteLine("send packet length = " + len.ToString());
 		}
-
 	}
 }
