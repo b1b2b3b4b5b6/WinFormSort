@@ -4,6 +4,7 @@ using System.Linq;
 using System.Runtime.InteropServices;
 using System.Threading.Tasks;
 using System.Windows.Forms;
+using RouteDirector;
 using RouteDirector.PacketProcess;
 using RouteDirector.Utility;
 namespace RouteDIRECTOR
@@ -16,22 +17,25 @@ namespace RouteDIRECTOR
 		//[STAThread]
 		static void Main()
 		{
+
 			//Application.EnableVisualStyles();
 			//Application.SetCompatibleTextRenderingDefault(false);
 			//Application.Run(new Form1());
-			byte[] buf;
-			byte[] temp = new byte[240];
-			buf = BitConverter.GetBytes((Int16)10);
-			Array.Reverse(buf);
-			Array.Copy(buf, 0, temp, 0, 2);
-			buf = BitConverter.GetBytes((Int16)100);
-			Array.Reverse(buf);
-			Array.Copy(buf, 0, temp, 2, 2);
-			buf = BitConverter.GetBytes((Int16)1000);
-			Array.Reverse(buf);
-			Array.Copy(buf, 0, temp, 4, 2);
-			Packet packet = new Packet(temp);
-			Console.ReadKey();
+
+			//RouteDirectControl routeDirect = new RouteDirectControl();
+			//int res;
+			//res = routeDirect.EstablishConnection("172.16.18.171", "3000");
+			//if (res == 0)
+			//	Console.WriteLine("连接成功");
+
+			//HeartBeat heartBeat = new HeartBeat(4);
+			//MessageBase messageBase = new MessageBase(heartBeat);
+			//Packet packet = new Packet(0, 0, messageBase);
+
+			//routeDirect.SendPacket(packet.packetBuf);
+			//routeDirect.StopConnection();
+			//Console.ReadKey();
+			
 		}
 	}
 }

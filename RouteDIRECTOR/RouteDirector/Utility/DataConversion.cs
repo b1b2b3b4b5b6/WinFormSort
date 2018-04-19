@@ -281,5 +281,42 @@ namespace RouteDirector.Utility
 			return len;
 		}
 
+		public static byte[] NumToByte(Int16 num, bool srcIsLittleEndian)
+		{
+			byte[] buf = BitConverter.GetBytes(num);
+			if (BitConverter.IsLittleEndian != srcIsLittleEndian)
+				Array.Reverse(buf);
+			return buf;
+		}
+
+		public static byte[] NumToByte(Int32 num, bool srcIsLittleEndian)
+		{
+			byte[] buf = BitConverter.GetBytes(num);
+			if (BitConverter.IsLittleEndian != srcIsLittleEndian)
+				Array.Reverse(buf);
+			return buf;
+		}
+
+		public static byte[] NumToByte(Int16 num, byte[] pre, bool srcIsLittleEndian)
+		{
+			byte[] buf = BitConverter.GetBytes(num);
+			if (pre == null)
+				return NumToByte(num, srcIsLittleEndian);
+			if (BitConverter.IsLittleEndian != srcIsLittleEndian)
+				Array.Reverse(buf);
+			pre = pre.Concat(buf).ToArray();
+			return pre;
+		}
+
+		public static byte[] NumToByte(Int32 num, byte[] pre, bool srcIsLittleEndian)
+		{
+			byte[] buf = BitConverter.GetBytes(num);
+			if (pre == null)
+				return NumToByte(num, srcIsLittleEndian);
+			if (BitConverter.IsLittleEndian != srcIsLittleEndian)
+				Array.Reverse(buf);
+			pre = pre.Concat(buf).ToArray();
+			return pre;
+		}
 	}
 }

@@ -8,6 +8,7 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 using RouteDirector;
+using RouteDirector.PacketProcess;
 
 namespace RouteDIRECTOR
 {
@@ -39,5 +40,8 @@ namespace RouteDIRECTOR
 			routeDirect.StopConnection();
 			lblConnectStatus.Text = "已断开连接";
 		}
+
+
+
 	}
 }

@@ -33,11 +33,12 @@
 			this.txtIp = new System.Windows.Forms.TextBox();
 			this.txtPort = new System.Windows.Forms.TextBox();
 			this.lblConnectStatus = new System.Windows.Forms.Label();
+			this.txtMessage = new System.Windows.Forms.RichTextBox();
 			this.SuspendLayout();
 			// 
 			// btnStartConnect
 			// 
-			this.btnStartConnect.Location = new System.Drawing.Point(247, 212);
+			this.btnStartConnect.Location = new System.Drawing.Point(25, 117);
 			this.btnStartConnect.Name = "btnStartConnect";
 			this.btnStartConnect.Size = new System.Drawing.Size(75, 23);
 			this.btnStartConnect.TabIndex = 0;
@@ -47,7 +48,7 @@
 			// 
 			// btnDisconnect
 			// 
-			this.btnDisconnect.Location = new System.Drawing.Point(349, 212);
+			this.btnDisconnect.Location = new System.Drawing.Point(127, 117);
 			this.btnDisconnect.Name = "btnDisconnect";
 			this.btnDisconnect.Size = new System.Drawing.Size(75, 23);
 			this.btnDisconnect.TabIndex = 1;
@@ -57,34 +58,44 @@
 			// 
 			// txtIp
 			// 
-			this.txtIp.Location = new System.Drawing.Point(247, 120);
+			this.txtIp.Location = new System.Drawing.Point(25, 25);
 			this.txtIp.Name = "txtIp";
 			this.txtIp.Size = new System.Drawing.Size(177, 21);
 			this.txtIp.TabIndex = 2;
-			this.txtIp.Text = "192.168.10.1";
+			this.txtIp.Text = "172.16.18.171";
 			// 
 			// txtPort
 			// 
-			this.txtPort.Location = new System.Drawing.Point(247, 160);
+			this.txtPort.Location = new System.Drawing.Point(25, 65);
 			this.txtPort.Name = "txtPort";
 			this.txtPort.Size = new System.Drawing.Size(177, 21);
 			this.txtPort.TabIndex = 3;
-			this.txtPort.Text = "80";
+			this.txtPort.Text = "3000";
 			// 
 			// lblConnectStatus
 			// 
 			this.lblConnectStatus.AutoSize = true;
-			this.lblConnectStatus.Location = new System.Drawing.Point(453, 222);
+			this.lblConnectStatus.Location = new System.Drawing.Point(93, 154);
 			this.lblConnectStatus.Name = "lblConnectStatus";
 			this.lblConnectStatus.Size = new System.Drawing.Size(41, 12);
 			this.lblConnectStatus.TabIndex = 4;
 			this.lblConnectStatus.Text = "label1";
+			// 
+			// txtMessage
+			// 
+			this.txtMessage.Font = new System.Drawing.Font("微软雅黑", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(134)));
+			this.txtMessage.Location = new System.Drawing.Point(236, 34);
+			this.txtMessage.Name = "txtMessage";
+			this.txtMessage.Size = new System.Drawing.Size(480, 353);
+			this.txtMessage.TabIndex = 21;
+			this.txtMessage.Text = "";
 			// 
 			// Form1
 			// 
 			this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 12F);
 			this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
 			this.ClientSize = new System.Drawing.Size(800, 450);
+			this.Controls.Add(this.txtMessage);
 			this.Controls.Add(this.lblConnectStatus);
 			this.Controls.Add(this.txtPort);
 			this.Controls.Add(this.txtIp);
@@ -105,6 +116,7 @@
 		private System.Windows.Forms.TextBox txtIp;
 		private System.Windows.Forms.TextBox txtPort;
 		private System.Windows.Forms.Label lblConnectStatus;
+		public System.Windows.Forms.RichTextBox txtMessage;
 	}
 }
 

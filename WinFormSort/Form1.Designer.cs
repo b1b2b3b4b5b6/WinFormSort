@@ -210,6 +210,6 @@
         private System.Windows.Forms.Label lblmsg;
         private System.Windows.Forms.Button btnDataAnalyze;
         private System.Windows.Forms.Button btnStartHeart;
-    }
+	}
 }
 

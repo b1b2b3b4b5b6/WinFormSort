@@ -8,12 +8,11 @@ using System.Threading;
 using System.Threading.Tasks;
 using RouteDirector.PacketProcess;
 using RouteDirector.TcpSocket;
-
+using RouteDIRECTOR;
 namespace RouteDirector
 {
 	public class RouteDirectControl 
 	{
-		public Queue messageQueue = new Queue();
 		Thread receiveThread;
 		TCPSocket tcpSocket;
 
@@ -51,21 +50,28 @@ namespace RouteDirector
 		{
 			while (true)
 			{
-				byte[] packet;
-				packet = tcpSocket.ReceiveData();
-				if (packet != null)
+				byte[] packetBuf;
+				packetBuf = tcpSocket.ReceiveData();
+				if (packetBuf != null)
 				{
 					//开启新task来处理接收的最新报文
-					Task task = new Task(() => { PacketAnalyze(packet); });
+					Task task = new Task(() => { PacketAnalyze(packetBuf); });
 					task.Start();
 				}
 			}
+		}
 
-		}
-		private void PacketAnalyze(byte[] packet)
+		private void PacketAnalyze(byte[] tPacket)
 		{
-			PacketProcessor packetProcessor = new PacketProcessor(packet);
-			packetProcessor.GetMessage(messageQueue);
+			Packet packet = new Packet(tPacket);
+			Console.WriteLine("get packet");
 		}
+
+		public void SendPacket(byte[] buf)
+		{
+			tcpSocket.SendData(buf);
+			Console.WriteLine("get packet");
+		}
+
 	}
 }
