@@ -4,10 +4,11 @@ using System.Linq;
 using System.Runtime.InteropServices;
 using System.Text;
 using System.Threading.Tasks;
+using RouteDirector.TcpSocket;
 using RouteDirector.Utility;
 namespace RouteDirector.PacketProcess
 {
-	 class Packet
+	public class Packet
 	{
 		public enum Identification : Int16
 		{
@@ -17,14 +18,23 @@ namespace RouteDirector.PacketProcess
 			RouteDirector = 30,
 			InductManager = 31,
 		}
-		static int packetMaxLength = 240;
+
+		public enum TransportError : Int16
+		{
+			NoErr = 0,
+			CommLinkErr = 1,
+			CycleNumERR = 2,
+			HanderFormatErr = 3,
+			AckBufOverflowErr = 4,
+			AckSeqErr = 5,
+		}
+		const int packetMaxLength = 240;
 
 		public Int16 cycleNum;
 		public Int16 senderId;
 		public Int16 receiverId;
 		public Int16 ack;
 		public Int16 transportError;
-
 
 		List<MessageBase> messageList = new List<MessageBase>();
 		private byte[] packetBuf;
@@ -34,6 +44,7 @@ namespace RouteDirector.PacketProcess
 		/// <returns>报文数组</returns>
 		public byte[] GetBuf()
 		{
+			pack();
 			return packetBuf;
 		}
 
@@ -60,13 +71,14 @@ namespace RouteDirector.PacketProcess
 		/// </summary>
 		/// <param name="tCycleNum">报文序列号</param>
 		///<param name="tCycleNum">应答序列号</param>
-		public Packet(Int16 tCycleNum, Int16 tAck)
+		public Packet()
 		{
-			senderId = (Int16)Identification.RouteDirector;
-			receiverId = (Int16)Identification.PLC1;
-			cycleNum = tCycleNum;
-			ack = tAck;
-			transportError = 0;
+			packetInit(0);
+		}
+
+		public Packet(Packet packToRes)
+		{
+			packetInit(packToRes.cycleNum);
 		}
 
 		/// <summary>
@@ -76,9 +88,13 @@ namespace RouteDirector.PacketProcess
 		public void AddMsg(MessageBase messageBase)
 		{
 			messageList.Add(messageBase);
-			pack();
 		}
 
+		public void AddCycleNum(Int16 tCycleNum, Int16 tAck)
+		{
+			cycleNum = tCycleNum;
+			ack = tAck;
+		}
 		/// <summary>
 		/// 为报文添加多条消息
 		/// </summary>
@@ -86,7 +102,14 @@ namespace RouteDirector.PacketProcess
 		public void AddMsgList(List<MessageBase> tMessageList)
 		{
 			messageList = tMessageList;
-			pack();
+		}
+
+		private void packetInit(Int16 tAck)
+		{
+			AddCycleNum(0, 0);
+			senderId = (Int16)Identification.RouteDirector;
+			receiverId = (Int16)Identification.PLC1;
+			transportError = 0;
 		}
 
 		/// <summary>
@@ -103,7 +126,6 @@ namespace RouteDirector.PacketProcess
 			int len = 240 - packetBuf.Length;
 			byte[] padding = Enumerable.Repeat((byte)0xff, len).ToArray();
 			packetBuf = packetBuf.Concat(padding).ToArray();
-
 		}
 
 		/// <summary>
@@ -127,7 +149,6 @@ namespace RouteDirector.PacketProcess
 						packetBuf = (byte[])buf.Take(offset).ToArray();
 						break;
 					}
-						
 					else
 					{
 						MessageBase message = MessageBase.MessageCreate(buf, ref offset);
@@ -180,7 +201,7 @@ namespace RouteDirector.PacketProcess
 			str.AppendLine("senderId = " + GetName(senderId));
 			str.AppendLine("receiverId = " + GetName(receiverId));
 			str.AppendLine("ack = " + ack.ToString());
-			str.AppendLine("transportError = " + transportError.ToString());
+			str.AppendLine("transportError = " + Enum.GetName(typeof(TransportError), transportError));
 			str.AppendLine();
 			foreach (MessageBase messageBase in messageList)
 			{

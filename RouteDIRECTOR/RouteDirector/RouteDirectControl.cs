@@ -15,14 +15,15 @@ namespace RouteDirector
 	{
 		Thread receiveThread;
 		TCPSocket tcpSocket;
+		private Queue packetQuene = new Queue();
+		Semaphore packetCount = new Semaphore(0, 10);
+		private static Int16 heartBeatTime = 5;
+		static Int16 cycleNum = 0;
+		static Int16 ack = 0;
 
 		public RouteDirectControl() {
 			tcpSocket = new TCPSocket();
 			receiveThread = new Thread(ReceiveHandle) { IsBackground = true };
-		}
-		public void BeginWork(byte[] arr)
-		{
-
 		}
 
 		public int EstablishConnection(string ip, string port)
@@ -53,30 +54,52 @@ namespace RouteDirector
 				byte[] packetBuf;
 				Console.WriteLine("try receive");
 				packetBuf = tcpSocket.ReceiveData();
-				Console.WriteLine("receive complete");
-				if (packetBuf != null)
-				{
-					//开启新task来处理接收的最新报文
-					Task task = new Task(() => { PacketAnalyze(packetBuf); });
-					task.Start();
-				}
-				else
-					Console.WriteLine("receive null packet");
+				Console.WriteLine("get packet length = " + packetBuf.Length.ToString());
+				//Console.Write(BitConverter.ToString(packetBuf));
+				packetQuene.Enqueue(packetBuf);
+				packetCount.Release();
+				
 			}
 		}
 
-		private void PacketAnalyze(byte[] tPacket)
+		public Packet WaitPacket()
 		{
-			Console.WriteLine("get packet length = " + tPacket.Length.ToString());
-			Packet packet = new Packet(tPacket);
-			StringBuilder str = new StringBuilder();
-			Console.Write(packet.GetInfo(str));
+			packetCount.WaitOne();
+			byte[] buf = (byte[])packetQuene.Dequeue();
+			Packet packet = new Packet(buf);
+			Console.WriteLine("set ack = {0:D}", packet.cycleNum);
+			ack = packet.cycleNum;
+			return packet;
 		}
 
-		public void SendPacket(byte[] buf)
+		public void SendPacket(Packet packet)
 		{
-			int len = tcpSocket.SendData(buf);
-			Console.WriteLine("send packet length = " + len.ToString());
+			packet.AddCycleNum(cycleNum, ack);
+			Console.WriteLine("send! cycleNum = {0:D}, ack = {1:D}", cycleNum, ack);
+			tcpSocket.SendData(packet.GetBuf());
+			
+			cycleNum++;
+			if (cycleNum > 99)
+				cycleNum = 1;
+		}
+
+		public void SendStart()
+		{
+			Packet packet = new Packet();
+			HeartBeat heartBeat = new HeartBeat(heartBeatTime);
+			packet.AddMsg(heartBeat);
+			packet.AddCycleNum(0, 0);
+			tcpSocket.SendData(packet.GetBuf());
+			Console.WriteLine("send! cycleNum = {0:D}, ack = {0:D}", 0, 0);
+			cycleNum = 1;
+		}
+
+		public void SendHeartBeat()
+		{
+			Packet packetSend = new Packet();
+			HeartBeat heartbeat = new HeartBeat(heartBeatTime);
+			packetSend.AddMsg(heartbeat);
+			SendPacket(packetSend);
 		}
 	}
 }

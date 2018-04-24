@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections;
 using System.Net;
 using System.Net.Sockets;
 
@@ -7,7 +8,7 @@ namespace RouteDirector.TcpSocket
 	class TCPSocket
 	{
 		private Socket clientSocket;
-		
+
 		public bool ConnectStatus { set; get; }
 		public TCPSocket() {
 			ConnectStatus = false;
@@ -49,13 +50,15 @@ namespace RouteDirector.TcpSocket
 
 		public byte[] ReceiveData()
 		{
+			byte[] buf = new byte[240];
 			int len;
 			try
 			{
-				byte[] buf = new byte[240];
+				
 				len = clientSocket.Receive(buf);
-				if (len != 0)
-					return buf;
+				byte[] packet = new byte[len];
+				Array.Copy(buf, packet, len);
+				return packet;
 			}
 
 			catch

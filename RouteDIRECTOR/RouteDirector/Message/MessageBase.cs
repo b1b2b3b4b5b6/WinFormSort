@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 
 namespace RouteDirector.PacketProcess
 {
-	class MessageBase
+	public class MessageBase
 	{
 		public enum MessageType : Int16
 		{

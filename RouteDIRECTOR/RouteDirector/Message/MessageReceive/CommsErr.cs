@@ -25,8 +25,11 @@ namespace RouteDirector.PacketProcess
 		/// <param name="offset">数组偏移量</param>
 		public CommsErr(byte[] buf, int offset) : base(messageId)
 		{
+			base.msgBuf = new byte[len];
+			Array.Copy(buf, 0, base.msgBuf, 0, len);
 			offset += 2;
 			offset += DataConversion.ByteToNum(buf, offset, ref error, false);
+			
 		}
 
 		/// <summary>

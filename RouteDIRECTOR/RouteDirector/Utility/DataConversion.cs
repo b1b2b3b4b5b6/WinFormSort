@@ -175,7 +175,7 @@ namespace RouteDirector.Utility
 		///  <param name="num">数值引用</param>
 		/// <param name="srcIsLittleEndian">数组字节序是否为小端模式</param>
 		/// <returns>转换字节数</returns>
-		public static int ByteToNum(byte[] src,  int offset, ref Int16 num, bool srcIsLittleEndian)
+		public static int ByteToNum(byte[] src, int offset, ref Int16 num, bool srcIsLittleEndian)
 		{
 			int len = sizeof(Int16);
 			byte[] buf = new byte[len];
@@ -280,7 +280,13 @@ namespace RouteDirector.Utility
 			num = BitConverter.ToUInt64(buf, 0);
 			return len;
 		}
-
+		
+		/// <summary>
+		/// 数值转byte数组
+		/// </summary>
+		/// <param name="num">数值</param>
+		/// <param name="srcIsLittleEndian">数组字节序是否为小端模式</param>
+		/// <returns>byte数组</returns>
 		public static byte[] NumToByte(Int16 num, bool srcIsLittleEndian)
 		{
 			byte[] buf = BitConverter.GetBytes(num);
@@ -289,6 +295,12 @@ namespace RouteDirector.Utility
 			return buf;
 		}
 
+		/// <summary>
+		/// 数值转byte数组
+		/// </summary>
+		/// <param name="num">数值</param>
+		/// <param name="srcIsLittleEndian">数组字节序是否为小端模式</param>
+		/// <returns>byte数组</returns>
 		public static byte[] NumToByte(Int32 num, bool srcIsLittleEndian)
 		{
 			byte[] buf = BitConverter.GetBytes(num);
@@ -297,6 +309,13 @@ namespace RouteDirector.Utility
 			return buf;
 		}
 
+		/// <summary>
+		/// 数值转byte数组并追加
+		/// </summary>
+		/// <param name="num">数值</param>
+		/// <param name="pre">要追加的byte数组</param>
+		/// <param name="srcIsLittleEndian">数组字节序是否为小端模式</param>
+		/// <returns>追加后byte数组</returns>
 		public static byte[] NumToByte(Int16 num, byte[] pre, bool srcIsLittleEndian)
 		{
 			byte[] buf = BitConverter.GetBytes(num);
@@ -308,6 +327,13 @@ namespace RouteDirector.Utility
 			return pre;
 		}
 
+		/// <summary>
+		/// 数值转byte数组并追加
+		/// </summary>
+		/// <param name="num">数值</param>
+		/// <param name="pre">要追加的byte数组</param>
+		/// <param name="srcIsLittleEndian">数组字节序是否为小端模式</param>
+		/// <returns>追加后byte数组</returns>
 		public static byte[] NumToByte(Int32 num, byte[] pre, bool srcIsLittleEndian)
 		{
 			byte[] buf = BitConverter.GetBytes(num);

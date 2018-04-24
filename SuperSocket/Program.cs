@@ -4,12 +4,13 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace RouteDIRECTOR
+namespace SuperSocket
 {
-	class Test : Father
+	class Program
 	{
-		public override void pack()
+		static void Main(string[] args)
 		{
+
 		}
 	}
 }

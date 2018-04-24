@@ -8,13 +8,14 @@ namespace RouteDirector.PacketProcess
 {
 	class DivertReq : MessageBase
 	{
-		static private  Int16 messageId = (Int16)MessageType.DivertReq; 
-		static private Int16 codeStrLen = 10;
+		private const Int16 codeStrLen = 22;
+	
+		private const Int16 messageId = (Int16)MessageType.DivertReq;
 		public Int16 nodeId;
 		public Int16 cartSeq;
 		public Int32 attribute;
 		public string codeStr;
-		static public int len = 20;
+		static public int len = 32;
 
 		/// <summary>
 		/// 解析消息数组至单个消息对象
@@ -23,6 +24,8 @@ namespace RouteDirector.PacketProcess
 		/// <param name="offset">数组偏移量</param>
 		public DivertReq(byte[] buf, int offset) : base(messageId)
 		{
+			base.msgBuf = new byte[len];
+			Array.Copy(buf, 0, base.msgBuf, 0, len);
 			offset += 2;
 			offset += DataConversion.ByteToNum(buf, offset, ref nodeId, false);
 			offset += DataConversion.ByteToNum(buf, offset, ref cartSeq, false);
