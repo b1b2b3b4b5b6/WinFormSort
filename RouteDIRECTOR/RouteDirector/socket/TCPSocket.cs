@@ -17,16 +17,16 @@ namespace RouteDirector.TcpSocket
 		public int ConnectServer(IPEndPoint ipe)
 		{
 			if (ConnectStatus == true)
-				return -1;
+				return 0;
 			try
 			{
 				clientSocket = new Socket(AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp);
 				clientSocket.Connect(ipe);
 				//clientSocket.BeginConnect(ipe, new AsyncCallback(EndConnect), clientSocket);
 			}
-			catch (Exception e)
+			catch
 			{
-				throw e;
+				return -1;
 			}
 			ConnectStatus = true;
 			return 0;
@@ -50,7 +50,7 @@ namespace RouteDirector.TcpSocket
 
 		public byte[] ReceiveData()
 		{
-			byte[] buf = new byte[240];
+			byte[] buf = new byte[1024*100];
 			int len;
 			try
 			{
@@ -65,7 +65,6 @@ namespace RouteDirector.TcpSocket
 			{
 				throw;
 			}
-			return null;
 		}
 
 		public int SendData(byte[] data)

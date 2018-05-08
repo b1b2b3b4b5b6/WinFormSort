@@ -36,7 +36,7 @@ namespace RouteDirector.PacketProcess
 		public Int16 ack;
 		public Int16 transportError;
 
-		List<MessageBase> messageList = new List<MessageBase>();
+		public  List<MessageBase> messageList = new List<MessageBase>();
 		private byte[] packetBuf;
 		/// <summary>
 		/// 获取报文数组

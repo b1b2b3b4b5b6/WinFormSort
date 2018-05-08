@@ -1,0 +1,59 @@
+﻿<Window x:Class="test.MainWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:test"
+        mc:Ignorable="d"
+        Title="MainWindow" Height="550" Width="550">
+
+	<StackPanel Margin="10">
+		<WrapPanel HorizontalAlignment="Stretch" VerticalAlignment="Stretch">
+			<StackPanel VerticalAlignment="Top" Width="102" Height="150">
+				<Label FontWeight="Bold" FontSize="20" Content="节点1"/>
+				<RadioButton FontSize="15" Content="直行" Checked="RadioButton_Checked"/>
+				<RadioButton FontSize="15" Content="道口1" Checked="RadioButton_Checked_1"/>
+				<RadioButton FontSize="15" Content="道口2" Checked="RadioButton_Checked_2"/>
+				<RadioButton FontSize="15" Content="道口3" Checked="RadioButton_Checked_3"/>
+			</StackPanel>
+
+			<ScrollViewer HorizontalAlignment="Left" VerticalAlignment="Stretch" Width="400" Margin="0,10,0,10" Height="120" >
+				<TextBox Name="txt1" FontSize="15" HorizontalAlignment="Stretch" TextWrapping="Wrap" Text="hello" VerticalAlignment="Stretch"/>
+			</ScrollViewer>
+		</WrapPanel>
+
+		<WrapPanel HorizontalAlignment="Stretch" VerticalAlignment="Stretch">
+			<StackPanel VerticalAlignment="Top" Width="102" Height="150">
+				<Label FontWeight="Bold" FontSize="20" Content="节点6"/>
+				<RadioButton FontSize="15" Content="直行" Checked="RadioButton_Checked_4"/>
+				<RadioButton FontSize="15" Content="推出" Checked="RadioButton_Checked_5"/>
+			</StackPanel>
+			<ScrollViewer HorizontalAlignment="Left" VerticalAlignment="Stretch" Width="400" Margin="0,10,0,10" Height="120">
+				<TextBox Name="txt2" FontSize="15" HorizontalAlignment="Stretch" TextWrapping="Wrap" Text="hello" VerticalAlignment="Stretch"/>
+			</ScrollViewer>
+		</WrapPanel>
+
+		<WrapPanel HorizontalAlignment="Stretch" VerticalAlignment="Stretch">
+			<StackPanel VerticalAlignment="Top" Width="102" Height="150">
+				<Label FontWeight="Bold" FontSize="20" Content="节点23"/>
+				<RadioButton FontSize="15" Content="直行" Checked="RadioButton_Checked_6"/>
+				<RadioButton FontSize="15" Content="推出" Checked="RadioButton_Checked_7"/>
+			</StackPanel>
+			<ScrollViewer HorizontalAlignment="Left" VerticalAlignment="Stretch" Width="400" Margin="0,10,0,10" Height="120">
+				<TextBox Name="txt3" FontSize="15" HorizontalAlignment="Stretch" TextWrapping="Wrap" Text="hello" VerticalAlignment="Stretch"/>
+			</ScrollViewer>
+		</WrapPanel>
+
+		<Grid>
+			<Button Content="建立连接" Width="70" Name="btnConnect" Click="btnConnect_Click" Margin="0,0,150,0"/>
+			<Button Content="清空信息" Width="70" Name="btnEmpty" Click="btnEmpty_Click" Margin="0,0,0,0" />
+			<Button Content="断开连接" Width="70" Name="btnDisconnect" Click="btnDisconnect_Click" Margin="150,0,0,0"/>
+		</Grid>
+
+		<StackPanel Orientation="Horizontal">
+			<TextBlock FontSize="15">连接状态>>></TextBlock>
+			<TextBlock FontSize="15" Name="txtStatus">连接已断开</TextBlock>
+		</StackPanel>
+	</StackPanel>
+
+</Window>

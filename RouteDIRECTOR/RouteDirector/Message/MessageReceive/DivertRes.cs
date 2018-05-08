@@ -9,12 +9,29 @@ namespace RouteDirector.PacketProcess
 	class DivertRes : MessageBase
 	{
 		private const Int16 codeStrLen = 22;
-
+		private List<string> ResultCodes = new List<string>{
+			"No Dirvert Connect Received",
+			"NoRead/Unexpected Tote handled by hardware",
+			"Invalid Divert Direction",
+			"Divert Jam",
+			"Actuator Fault/TimeOut",
+			"Lane Full",
+			"Overlapping Tracking Windows",
+			"Divert Command Received Too Late",
+			"Carriers Too Close Together/Congestion",
+			"Carton Lost–Tracking Failure",
+			"Unsuccessful Divert–Actuator Failure",
+			"Carrier Too Long",
+			"Length Check Failure",
+			"Divert Command Overridden For product Flow Control",
+			"Carrier ID Unclear",
+		};
+		
 		private const Int16 messageId = (Int16)MessageBase.MessageType.DivertRes;
 		public Int16 nodeId;
 		public Int16 cartSeq;
 		public Int16 laneId;
-		public Int16 divertRes;
+		public Int16 divertRes = 0;
 		public string codeStr;
 		static public int len = 32;
 
@@ -52,5 +69,25 @@ namespace RouteDirector.PacketProcess
 			return str;
 		}
 
+		public string GetResult()
+		{
+			Int16 res = divertRes;
+			if (res == 0)
+				return "Divert Success";
+			string resStr = "Error:";
+			int n = 0;
+			while (res != 0)
+			{
+				if ((res & 1) == 1)
+				{
+					resStr += " ";
+					resStr += ResultCodes[n];
+					resStr += ",";
+				}
+				res >>= 1;
+				n++;
+			}
+			return resStr;
+		}
 	}
 }

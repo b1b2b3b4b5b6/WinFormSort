@@ -47,7 +47,21 @@ namespace RouteDirector.PacketProcess
 			Pack();
 		}
 
-		private void Pack()
+		/// <summary>
+		/// 根据DivertReq对象创建消息对象
+		/// </summary>
+		/// <param name="divertReq">DivertReq对象</param>
+		/// <param name="tLaneId">分拣线路</param>
+		public DivertCmd(DivertReq divertReq, Int16 tLaneId) : base(messageId)
+        {
+            nodeId = divertReq.nodeId;
+            cartSeq = divertReq.cartSeq;
+            priority = 0;
+            laneId = tLaneId;
+            Pack();
+        }
+
+        private void Pack()
 		{
 			messageBuf = DataConversion.NumToByte(msgId, false);
 			messageBuf = DataConversion.NumToByte(nodeId, messageBuf, false);

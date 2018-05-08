@@ -71,7 +71,7 @@ namespace RouteDirector.PacketProcess
 					break;
 				default:
 					throw new NotImplementedException();
-					break;
+					
 			}
 			return messageBase;
 		}
