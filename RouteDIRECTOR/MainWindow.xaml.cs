@@ -38,7 +38,6 @@ namespace test
 		{
 			InitializeComponent();
             btnConnect.IsEnabled = true;
-            btnDisconnect.IsEnabled = false;
 		}
 		private void btnEmpty_Click(object sender, RoutedEventArgs e)
 		{
@@ -74,7 +73,6 @@ namespace test
                     {
                         txtStatus.Text = "连接建立成功";
                         btnConnect.IsEnabled = false;
-                        btnDisconnect.IsEnabled = true;
                     }));
                 
                 else
@@ -83,32 +81,10 @@ namespace test
                     this.Dispatcher.Invoke(new Action(() =>
                     {
 						btnConnect.IsEnabled = true;
-						btnDisconnect.IsEnabled = false;
 						txtStatus.Text = "连接建立失败，请10s后再次尝试建立连接";
                     }));
                 }
             });
-
-
- 
-        }
-
-        private void btnDisconnect_Click(object sender, RoutedEventArgs e)
-        {
-
-            txtStatus.Text = "断开连接中";
-            Task task = Task.Run(() =>
-            {
-                DisConnect();
-                this.Dispatcher.Invoke(new Action(() =>
-                {
-                    txtStatus.Text = "已断开连接";
-                    btnConnect.IsEnabled = true;
-                    btnDisconnect.IsEnabled = false;
-                }));
-                
-            });
-
         }
 
         private void DisConnect()
@@ -119,24 +95,18 @@ namespace test
 		 
         private void BackHandle()
         {
-			//int res = routeDirect.EstablishConnection("172.16.18.171", "3000");
-			int res = 0;
-			routeDirect.online = true;
+			int res = routeDirect.EstablishConnection("172.16.18.171", "3000");
 			if (res != 0)
 				return;
-			heartTime.Elapsed += HeartTime_Elapsed;
-			heartTime.Interval = 11000;
-			heartTime.AutoReset = false;
-			heartTime.Enabled = true;
-			heartTime.Start();
+			HeartTimerInit();
 
 			while (true)
             {
                 Packet packetReceive = routeDirect.WaitPacket();
-				heartTime.Stop();
-				heartTime.Start();
+				HeartTimerReset();
 				Packet sendPacket = new Packet();
                 DivertCmd cmd = null;
+
 				Action falshUI = new Action(() =>
 			   {
 				   txt1.Text = log1.ToString();
@@ -159,8 +129,6 @@ namespace test
 								break;
                             case 23:
 								cmd = new DivertCmd(temp, (short)node23);
-								break;
-							default:
 								break;
 						}
                         sendPacket.AddMsg(cmd);
@@ -200,13 +168,25 @@ namespace test
             }
         }
 
+		private void HeartTimerReset()
+		{
+			heartTime.Stop();
+			heartTime.Start();
+		}
+		private void HeartTimerInit()
+		{
+			heartTime.Elapsed += HeartTime_Elapsed;
+			heartTime.Interval = 11000;
+			heartTime.AutoReset = false;
+			heartTime.Enabled = true;
+			heartTime.Start();
+		}
 		private void HeartTime_Elapsed(object sender, System.Timers.ElapsedEventArgs e)
 		{
 			DisConnect();
 			this.Dispatcher.Invoke(new Action(() =>
 			{
 				btnConnect.IsEnabled = true;
-				btnDisconnect.IsEnabled = false;
 				txtStatus.Text = "连接建立失败，请10s后再次尝试建立连接";
 			}));
 			MessageBox.Show("心跳包超时，自动断开连接");
@@ -272,6 +252,13 @@ namespace test
             node23 = 997;
         }
 		#endregion
+
+		private void Window_Closing(object sender, System.ComponentModel.CancelEventArgs e)
+		{
+			if (routeDirect.online == true)
+				DisConnect();
+		}
+
 	}
 
 }

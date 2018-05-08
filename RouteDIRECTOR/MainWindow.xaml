@@ -5,6 +5,7 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:test"
         mc:Ignorable="d"
+		Closing="Window_Closing"
         Title="MainWindow" Height="550" Width="550">
 
 	<StackPanel Margin="10">
@@ -46,8 +47,7 @@
 
 		<Grid>
 			<Button Content="建立连接" Width="70" Name="btnConnect" Click="btnConnect_Click" Margin="0,0,150,0"/>
-			<Button Content="清空信息" Width="70" Name="btnEmpty" Click="btnEmpty_Click" Margin="0,0,0,0" />
-			<Button Content="断开连接" Width="70" Name="btnDisconnect" Click="btnDisconnect_Click" Margin="150,0,0,0"/>
+			<Button Content="清空信息" Width="70" Name="btnEmpty" Click="btnEmpty_Click" Margin="150,0,0,0" />
 		</Grid>
 
 		<StackPanel Orientation="Horizontal">
