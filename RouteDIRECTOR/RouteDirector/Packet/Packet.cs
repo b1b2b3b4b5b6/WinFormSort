@@ -66,19 +66,10 @@ namespace RouteDirector.PacketProcess
 			messageList = UnpackMessage(buf, offset);
 		}
 
-		/// <summary>
-		/// 根据序列号创建报文对象
-		/// </summary>
-		/// <param name="tCycleNum">报文序列号</param>
-		///<param name="tCycleNum">应答序列号</param>
+
 		public Packet()
 		{
 			packetInit(0);
-		}
-
-		public Packet(Packet packToRes)
-		{
-			packetInit(packToRes.cycleNum);
 		}
 
 		/// <summary>
@@ -89,7 +80,11 @@ namespace RouteDirector.PacketProcess
 		{
 			messageList.Add(messageBase);
 		}
-
+		/// <summary>
+		/// 为报文对象添加序列号
+		/// </summary>
+		/// <param name="tCycleNum">报文序列号</param>
+		///<param name="tCycleNum">应答序列号</param>
 		public void AddCycleNum(Int16 tCycleNum, Int16 tAck)
 		{
 			cycleNum = tCycleNum;

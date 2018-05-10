@@ -25,7 +25,6 @@ namespace RouteDirector
 			tcpSocket = new TCPSocket();
 			receiveThread = new Thread(ReceiveHandle) { IsBackground = true };
 		}
-
         /// <summary>
         /// 建立连接
         /// </summary>

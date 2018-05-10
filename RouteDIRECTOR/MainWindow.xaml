@@ -6,47 +6,88 @@
         xmlns:local="clr-namespace:test"
         mc:Ignorable="d"
 		Closing="Window_Closing"
-        Title="MainWindow" Height="550" Width="550">
+		ResizeMode="NoResize"
+        Title="MainWindow" Height="550" MaxHeight="550" MinHeight="550" Width="700" MaxWidth="700" MinWidth="700">
 
 	<StackPanel Margin="10">
 		<WrapPanel HorizontalAlignment="Stretch" VerticalAlignment="Stretch">
-			<StackPanel VerticalAlignment="Top" Width="102" Height="150">
+			<StackPanel Name="node1Hand" VerticalAlignment="Top" Width="80" Height="150">
 				<Label FontWeight="Bold" FontSize="20" Content="节点1"/>
-				<RadioButton FontSize="15" Content="直行" Checked="RadioButton_Checked"/>
 				<RadioButton FontSize="15" Content="道口1" Checked="RadioButton_Checked_1"/>
 				<RadioButton FontSize="15" Content="道口2" Checked="RadioButton_Checked_2"/>
 				<RadioButton FontSize="15" Content="道口3" Checked="RadioButton_Checked_3"/>
+				<RadioButton IsChecked="True" FontSize="15" Content="直行" Checked="RadioButton_Checked"/>
 			</StackPanel>
+			<StackPanel Name="node1Auto" VerticalAlignment="Top" Width="120" Height="150">
+				<Label FontWeight="Bold" FontSize="20" Content=""/>
+				<StackPanel Orientation="Horizontal" Height="20" >
+					<TextBox Name="limit1Left"  FontSize="13" HorizontalAlignment="Left" Width="50" TextWrapping="NoWrap" Text="" VerticalAlignment="Stretch" />
+					<Label FontWeight="Bold" FontSize="10" Content="~"/>
+					<TextBox Name="limit1Right" FontSize="13" HorizontalAlignment="Left" Width="50" TextWrapping="NoWrap" Text="" VerticalAlignment="Stretch"/>
+				</StackPanel>
+				<StackPanel Orientation="Horizontal" Height="20" >
+					<TextBox Name="limit2Left" FontSize="13" HorizontalAlignment="Left" Width="50" TextWrapping="NoWrap" Text="" VerticalAlignment="Stretch"/>
+					<Label FontWeight="Bold" FontSize="10" Content="~"/>
+					<TextBox Name="limit2Right" FontSize="13" HorizontalAlignment="Left" Width="50" TextWrapping="NoWrap" Text="" VerticalAlignment="Stretch"/>
+				</StackPanel>
+				<StackPanel Orientation="Horizontal" Height="20" >
+					<TextBox Name="limit3Left" FontSize="13" HorizontalAlignment="Left" Width="50" TextWrapping="NoWrap" Text="" VerticalAlignment="Stretch"/>
+					<Label FontWeight="Bold" FontSize="10" Content="~"/>
+					<TextBox Name="limit3Right" FontSize="13" HorizontalAlignment="Left" Width="50" TextWrapping="NoWrap" Text="" VerticalAlignment="Stretch"/>
+				</StackPanel>
 
-			<ScrollViewer HorizontalAlignment="Left" VerticalAlignment="Stretch" Width="400" Margin="0,10,0,10" Height="120" >
+			</StackPanel>
+			<ScrollViewer Name="scro1" HorizontalAlignment="Left" VerticalAlignment="Stretch" Width="400" Margin="0,10,0,10" Height="120" >
 				<TextBox Name="txt1" FontSize="15" HorizontalAlignment="Stretch" TextWrapping="Wrap" Text="hello" VerticalAlignment="Stretch"/>
 			</ScrollViewer>
 		</WrapPanel>
 
 		<WrapPanel HorizontalAlignment="Stretch" VerticalAlignment="Stretch">
-			<StackPanel VerticalAlignment="Top" Width="102" Height="150">
+			<StackPanel Name="node6Hand" VerticalAlignment="Top" Width="80" Height="150">
 				<Label FontWeight="Bold" FontSize="20" Content="节点6"/>
-				<RadioButton FontSize="15" Content="直行" Checked="RadioButton_Checked_4"/>
+				<RadioButton IsChecked="True" FontSize="15" Content="直行" Checked="RadioButton_Checked_4"/>
 				<RadioButton FontSize="15" Content="推出" Checked="RadioButton_Checked_5"/>
 			</StackPanel>
-			<ScrollViewer HorizontalAlignment="Left" VerticalAlignment="Stretch" Width="400" Margin="0,10,0,10" Height="120">
+			<StackPanel Name="node6Auto" VerticalAlignment="Top" Width="120" Height="150">
+				<Label FontWeight="Bold" FontSize="20" Content=""/>
+				<Label FontWeight="Bold" Height="20" FontSize="1" Content=""/>
+				<StackPanel Orientation="Horizontal" Height="20" >
+					<TextBox Name="limit6Left" FontSize="13" HorizontalAlignment="Left" Width="50" TextWrapping="NoWrap" Text="" VerticalAlignment="Stretch"/>
+					<Label FontWeight="Bold" FontSize="10" Content="~"/>
+					<TextBox Name="limit6Right" FontSize="13" HorizontalAlignment="Left" Width="50" TextWrapping="NoWrap" Text="" VerticalAlignment="Stretch"/>
+				</StackPanel>
+				<CheckBox Name="check6" IsChecked="True" Height="20" FontSize="15" Checked="check6_Checked" Unchecked="check6_Unchecked">未知条码推出</CheckBox>
+			</StackPanel>
+			<ScrollViewer Name="scro2" HorizontalAlignment="Left" VerticalAlignment="Stretch" Width="400" Margin="0,10,0,10" Height="120">
 				<TextBox Name="txt2" FontSize="15" HorizontalAlignment="Stretch" TextWrapping="Wrap" Text="hello" VerticalAlignment="Stretch"/>
 			</ScrollViewer>
 		</WrapPanel>
 
 		<WrapPanel HorizontalAlignment="Stretch" VerticalAlignment="Stretch">
-			<StackPanel VerticalAlignment="Top" Width="102" Height="150">
+			<StackPanel Name="node23Hand" VerticalAlignment="Top" Width="80" Height="150">
 				<Label FontWeight="Bold" FontSize="20" Content="节点23"/>
-				<RadioButton FontSize="15" Content="直行" Checked="RadioButton_Checked_6"/>
+				<RadioButton IsChecked="True" FontSize="15" Content="直行" Checked="RadioButton_Checked_6"/>
 				<RadioButton FontSize="15" Content="推出" Checked="RadioButton_Checked_7"/>
 			</StackPanel>
-			<ScrollViewer HorizontalAlignment="Left" VerticalAlignment="Stretch" Width="400" Margin="0,10,0,10" Height="120">
+			<StackPanel Name="node23Auto" VerticalAlignment="Top" Width="120" Height="150">
+				<Label FontWeight="Bold" FontSize="20" Content=""/>
+				<Label FontWeight="Bold" Height="20" FontSize="2" Content=""/>
+				<StackPanel Orientation="Horizontal" Height="20" >
+					<TextBox Name="limit23Left" FontSize="13" HorizontalAlignment="Left" Width="50" TextWrapping="NoWrap" Text="" VerticalAlignment="Stretch"/>
+					<Label FontWeight="Bold" FontSize="10" Content="~"/>
+					<TextBox Name="limit23Right" FontSize="13" HorizontalAlignment="Left" Width="50" TextWrapping="NoWrap" Text="" VerticalAlignment="Stretch"/>
+				</StackPanel>
+				<CheckBox Name="check23" IsChecked="True" Height="20" FontSize="15" Checked="check23_Checked" Unchecked="check23_Unchecked">未知条码推出</CheckBox>
+			</StackPanel>
+			<ScrollViewer Name="scro3" HorizontalAlignment="Left" VerticalAlignment="Stretch" Width="400" Margin="0,10,0,10" Height="120">
 				<TextBox Name="txt3" FontSize="15" HorizontalAlignment="Stretch" TextWrapping="Wrap" Text="hello" VerticalAlignment="Stretch"/>
 			</ScrollViewer>
 		</WrapPanel>
 
 		<Grid>
+			<CheckBox Name="autoSwitch" FontSize="15" Unchecked="CheckBox_Unchecked" Checked="CheckBox_Checked" Margin="486,0,34,0">根据条码范围分拣</CheckBox>
 			<Button Content="建立连接" Width="70" Name="btnConnect" Click="btnConnect_Click" Margin="0,0,150,0"/>
+			<Button Content="保存条码范围" Name="btnSave" Click="btnSave_Click" HorizontalAlignment="Stretch" Margin="62,0,521,0"/>
 			<Button Content="清空信息" Width="70" Name="btnEmpty" Click="btnEmpty_Click" Margin="150,0,0,0" />
 		</Grid>
 
