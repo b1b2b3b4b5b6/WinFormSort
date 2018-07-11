@@ -3,10 +3,10 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using RouteDirector.Utility;
-namespace RouteDirector.PacketProcess
+
+namespace RouteDirector
 {
-	class DivertCmd : MessageBase
+	public class DivertCmd : MessageBase
 	{
 		public byte[] messageBuf;
 		static public Int16 messageId = (Int16)MessageBase.MessageType.DivertCmd;

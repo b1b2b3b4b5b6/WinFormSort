@@ -3,7 +3,7 @@ using System.Collections;
 using System.Net;
 using System.Net.Sockets;
 
-namespace RouteDirector.TcpSocket
+namespace RouteDirector
 {
 	class TCPSocket
 	{
@@ -24,10 +24,12 @@ namespace RouteDirector.TcpSocket
 				clientSocket.Connect(ipe);
 				//clientSocket.BeginConnect(ipe, new AsyncCallback(EndConnect), clientSocket);
 			}
-			catch
+			catch(Exception e)
 			{
+				Log.log.Error("tcp connnect error", e);
 				return -1;
 			}
+
 			ConnectStatus = true;
 			return 0;
 		}
@@ -43,8 +45,9 @@ namespace RouteDirector.TcpSocket
 				}
 
 			}
-			catch
+			catch (Exception e)
 			{
+				Log.log.Error("tcp disconnnect error", e);
 			}
 		}
 
@@ -61,9 +64,10 @@ namespace RouteDirector.TcpSocket
 				return packet;
 			}
 
-			catch
+			catch (Exception e)
 			{
-				throw;
+				Log.log.Error("tcp receive error", e);
+				return null;
 			}
 		}
 
@@ -74,9 +78,10 @@ namespace RouteDirector.TcpSocket
 			{
 				len = clientSocket.Send(data);
 			}
-			catch
+			catch (Exception e)
 			{
-				throw;
+				Log.log.Error("tcp send error", e);
+				return 0;
 			}
 			return len;
 		}

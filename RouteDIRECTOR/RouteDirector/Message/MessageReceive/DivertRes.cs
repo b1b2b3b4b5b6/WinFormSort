@@ -3,10 +3,10 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using RouteDirector.Utility;
-namespace RouteDirector.PacketProcess
+
+namespace RouteDirector
 {
-	class DivertRes : MessageBase
+	public class DivertRes : MessageBase
 	{
 		private const Int16 codeStrLen = 22;
 		private List<string> ResultCodes = new List<string>{
@@ -49,7 +49,7 @@ namespace RouteDirector.PacketProcess
 			offset += DataConversion.ByteToNum(buf, offset, ref cartSeq, false);
 			offset += DataConversion.ByteToNum(buf, offset, ref laneId, false);
 			offset += DataConversion.ByteToNum(buf, offset, ref divertRes, false);
-			codeStr = Encoding.ASCII.GetString(buf, offset, codeStrLen);
+			codeStr = Encoding.ASCII.GetString(buf, offset, codeStrLen).Trim();
 		}
 
 		/// <summary>

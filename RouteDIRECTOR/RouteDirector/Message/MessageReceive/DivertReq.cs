@@ -3,10 +3,10 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using RouteDirector.Utility;
-namespace RouteDirector.PacketProcess
+
+namespace RouteDirector
 {
-	class DivertReq : MessageBase
+	public class DivertReq : MessageBase
 	{
 		private const Int16 codeStrLen = 22;
 	
@@ -30,7 +30,7 @@ namespace RouteDirector.PacketProcess
 			offset += DataConversion.ByteToNum(buf, offset, ref nodeId, false);
 			offset += DataConversion.ByteToNum(buf, offset, ref cartSeq, false);
 			offset += DataConversion.ByteToNum(buf, offset, ref attribute, false);
-			codeStr = Encoding.ASCII.GetString(buf, offset, codeStrLen);
+			codeStr = Encoding.ASCII.GetString(buf, offset, codeStrLen).Trim();
 		}
 
 		/// <summary>

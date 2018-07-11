@@ -6,17 +6,22 @@ using System.Net;
 using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
-using RouteDirector.PacketProcess;
-using RouteDirector.TcpSocket;
+using log4net;
+using static RouteDirector.MessageBase;
+
 namespace RouteDirector
-{
+{	
 	public class RouteDirectControl 
 	{
 		Thread receiveThread;
 		TCPSocket tcpSocket;
-		private Queue packetQuene = new Queue();
-		Semaphore packetCount = new Semaphore(0, 1000);
-		private static Int16 heartBeatTime = 5;
+		System.Timers.Timer heartTime;
+
+		private Queue recMsgQuene = new Queue();
+		Semaphore recMsgCount = new Semaphore(0, 1000);
+
+		static readonly object sendLock = new object();
+		public static Int16 heartBeatTime = 5;
 		static Int16 cycleNum = 0;
 		static Int16 ack = 0;
 		public bool online = false;
@@ -24,6 +29,7 @@ namespace RouteDirector
 		public RouteDirectControl() {
 			tcpSocket = new TCPSocket();
 			receiveThread = new Thread(ReceiveHandle) { IsBackground = true };
+			HeartTimerInit(heartBeatTime * 2 + 1);
 		}
         /// <summary>
         /// 建立连接
@@ -31,31 +37,87 @@ namespace RouteDirector
         /// <param name="ip">ip字符</param>
         /// <param name="port">port字符</param>
         /// <returns>连接状态</returns>
-        public int EstablishConnection(string ip, string port)
+        public int EstablishConnection()
 		{
 			
-			IPEndPoint ipe = new IPEndPoint(IPAddress.Parse(ip), Convert.ToInt32(port));
-
+			IPEndPoint ipe = new IPEndPoint(IPAddress.Parse("172.16.18.171"), Convert.ToInt32("3000"));
+			HeartTimerStart();
 			if (tcpSocket.ConnectServer(ipe) == 0)
 			{
 				receiveThread.Start();
                 SendStart();
-                WaitPacket();
 				online = true;
+				Log.log.Debug("EstablishConnection success");
 				return 0;
 			}
+			Log.log.Debug("EstablishConnection fail");
 			return -1;
 		}
-        /// <summary>
-        /// 断开连接
-        /// </summary>
+
+		#region  心跳监视
+		private void HeartTimerReset()
+		{
+			heartTime.Stop();
+			heartTime.Start();
+			Log.log.Debug("Heartbeat reset");
+		}
+
+		private void HeartTimerInit(int s)
+		{
+			Log.log.Debug("Heartbeat init");
+			heartTime = new System.Timers.Timer();
+			heartTime.Elapsed += HeartTime_Elapsed;
+			heartTime.Interval = s*1000;
+			heartTime.AutoReset = false;
+			heartTime.Stop();
+		}
+
+		private void HeartTimerStart()
+		{
+			Log.log.Debug("Heartbeat start");
+			heartTime.Start();
+		}
+
+		private void HeartTime_Elapsed(object sender, System.Timers.ElapsedEventArgs e)
+		{
+			Log.log.Debug("Heartbeat break，break connection");
+			StopConnection();			
+		}
+		private void HeartTimeStop()
+		{
+			Log.log.Debug("Heartbeat stop");
+			heartTime.Stop();
+		}
+		#endregion
+
+		/// <summary>
+		/// 断开连接
+		/// </summary>
 		public void StopConnection()
 		{
+			HeartTimeStop();
 			receiveThread.Abort();
 			//缺少对receive是否完成的判断
 			receiveThread = new Thread(ReceiveHandle) { IsBackground = true };
 			tcpSocket.DisconnectServer();
+			Log.log.Debug("StopConnection success");
 			online = false;
+			Log.log.Debug("exit");
+		}
+
+		private void Reconnection()
+		{
+			Log.log.Debug("Reconnectioning");
+			StopConnection();
+			if (EstablishConnection() == 0)
+				Log.log.Debug("Reconnection success");
+			else
+				Log.log.Debug("Reconnection fail");
+		}
+
+		private void Unexpect()
+		{
+			Log.log.Debug("Unexpect");
 		}
 
 		private void ReceiveHandle()
@@ -63,9 +125,12 @@ namespace RouteDirector
 			while (true)
 			{
 				byte[] packetBuf;
-				//Console.WriteLine("try receive");
 				packetBuf = tcpSocket.ReceiveData();
-				
+				if (packetBuf == null)
+				{
+					StopConnection();
+				}
+				HeartTimerReset();
 				PacketResolve(packetBuf);
 			}
 		}
@@ -100,10 +165,39 @@ namespace RouteDirector
 								byte[] qPacketBuf = new byte[end - start];
 								Array.Copy(packetBuf, start, qPacketBuf, 0, end - start);
 								start = end;
-								//Console.WriteLine("get packet length = " + qPacketBuf.Length.ToString());
-								//Console.Write(BitConverter.ToString(packetBuf));
-								packetQuene.Enqueue(qPacketBuf);
-								packetCount.Release();
+
+								Packet packet = new Packet(qPacketBuf);
+								if(packet.cycleNum != 0)
+									ack = packet.cycleNum;
+								foreach (MessageBase msg in packet.messageList)
+								{
+									if (msg.msgId == (Int16)MessageType.HeartBeat)
+									{
+										HeartBeat heartBeat = new HeartBeat(heartBeatTime);
+										SendMsg(heartBeat);
+										break;
+									}
+
+									if (msg.msgId == (Int16)MessageType.CommsErr)
+									{
+										Log.log.Debug("Get CommsErr");
+										StopConnection();
+									}
+
+									if (msg.msgId == (Int16)MessageType.NodeAva)
+									{
+										Unexpect();
+									}
+
+									if (msg.msgId == (Int16)MessageType.NoType)
+									{
+										Unexpect();
+									}
+
+									recMsgQuene.Enqueue(msg);
+									recMsgCount.Release();
+
+								}
 								if (end == packetBuf.Length)
 									break;
 							}
@@ -120,36 +214,11 @@ namespace RouteDirector
 					end++;
 			}
 		}
-        
-        /// <summary>
-        /// 等待接收一个报文
-        /// </summary>
-        /// <returns>packet对象</returns>
-		public Packet WaitPacket()
-		{
-			packetCount.WaitOne();
-			byte[] buf = (byte[])packetQuene.Dequeue();
-			Packet packet = new Packet(buf);
-			ack = packet.cycleNum;
-			//StringBuilder str = new StringBuilder();
-			//packet.GetInfo(str);
-			return packet;
-		}
 
         /// <summary>
         /// 发送一个报文
         /// </summary>
         /// <param name="packet">packet对象</param>
-        public void SendPacket(Packet packet)
-		{
-			packet.AddCycleNum(cycleNum, ack);
-			//Console.WriteLine("send! cycleNum = {0:D}, ack = {1:D}", cycleNum, ack);
-			tcpSocket.SendData(packet.GetBuf());
-			
-			cycleNum++;
-			if (cycleNum > 99)
-				cycleNum = 1;
-		}
 
 		private void SendStart()
 		{
@@ -158,16 +227,56 @@ namespace RouteDirector
 			packet.AddMsg(heartBeat);
 			packet.AddCycleNum(0, 0);
 			tcpSocket.SendData(packet.GetBuf());
-			//Console.WriteLine("send! cycleNum = {0:D}, ack = {0:D}", 0, 0);
+			Log.log.Debug("Send start");
 			cycleNum = 1;
 		}
 
-		public void SendHeartBeat()
+
+		public MessageBase WaitMsg()
 		{
-			Packet packetSend = new Packet();
-			HeartBeat heartbeat = new HeartBeat(heartBeatTime);
-			packetSend.AddMsg(heartbeat);
-			SendPacket(packetSend);
+			recMsgCount.WaitOne();
+
+			return (MessageBase)recMsgQuene.Dequeue();
+		}
+
+		public MessageBase GetMsg()
+		{
+			bool res = recMsgCount.WaitOne(1);
+			if(res == true)
+				return (MessageBase)recMsgQuene.Dequeue();
+			else
+				return null;
+		}
+
+		public void SendMsg(MessageBase msg)
+		{
+			lock (sendLock)
+			{
+				Packet packet = new Packet();
+				packet.AddCycleNum(cycleNum, ack);
+
+				packet.AddMsg(msg);
+
+				tcpSocket.SendData(packet.GetBuf());
+				Log.log.Debug("Send packet No." + cycleNum);
+				cycleNum++;
+				if (cycleNum > 99)
+					cycleNum = 1;			
+			}
+		}
+
+		public void FlushMsg()
+		{
+			Thread.Sleep(2000);
+			while (true)
+			{
+				MessageBase msg = new MessageBase();
+				msg = GetMsg();
+				if (msg == null)
+					break;
+				else
+					Log.log.Debug("abandon last msg");
+			}
 		}
 	}
 }

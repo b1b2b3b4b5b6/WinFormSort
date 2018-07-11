@@ -4,9 +4,8 @@ using System.Linq;
 using System.Runtime.InteropServices;
 using System.Text;
 using System.Threading.Tasks;
-using RouteDirector.TcpSocket;
-using RouteDirector.Utility;
-namespace RouteDirector.PacketProcess
+
+namespace RouteDirector
 {
 	public class Packet
 	{
