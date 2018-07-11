@@ -137,8 +137,5 @@ namespace IRouteDirector
 			}
 			stackStatus = StackStatus.Success;
 		}
-
-	
-	
 	}
 }
