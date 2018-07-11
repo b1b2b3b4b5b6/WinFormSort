@@ -77,8 +77,7 @@ namespace IRouteDirector
 				if (nodeSeq.node == divertReq.nodeId)
 					return nodeSeq.HanderReq(divertReq);
 			}
-			Log.log.Error("Find illegal node");
-			throw new Exception(); //can not reach here
+			return  null;
 		}
 
 		public void HanderRes(DivertRes divertRes)
@@ -92,6 +91,7 @@ namespace IRouteDirector
 					if ((box.exNode == divertRes.nodeId) && (box.exLane == divertRes.laneId))
 					{
 						box.status = BoxStatus.Success;
+						Log.log.Debug("box: " + box.barcode + " sort success");
 						CheckStatus();
 					}	
 					else
@@ -122,7 +122,18 @@ namespace IRouteDirector
 				return -1;
 			}
 
-			boxList[index].status = BoxStatus.Register;
+			if (boxList[index].status == BoxStatus.Success)
+			{
+				Log.log.Error("find same box or sorting falut happen");
+				throw new Exception();
+			}
+
+			if (boxList[index].status == BoxStatus.Missing)
+			{
+				boxList[index].status = BoxStatus.Register;
+				Log.log.Debug("register box: " + boxList[index].barcode);
+			}
+
 			if (isCounting)
 				boxList[index].showTimes = boxList[index].showTimes + 1;
 			return index;
@@ -135,6 +146,7 @@ namespace IRouteDirector
 				if (box.status != BoxStatus.Success)
 					return;
 			}
+			Log.log.Debug("stack sort success");
 			stackStatus = StackStatus.Success;
 		}
 	}

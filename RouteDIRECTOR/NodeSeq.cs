@@ -23,20 +23,13 @@ namespace IRouteDirector
 		public void AddBox(Box tBox)
 		{
 			int index;
-			try
-			{
-				index = laneSeqList.FindIndex((LaneSeq mLaneSeq) =>
-				{
-					if (mLaneSeq.lane == tBox.exLane)
-						return true;
-					else
-						return false;
-				});
+			index = laneSeqList.FindIndex(laneSeq => laneSeq.lane == tBox.exLane);
+			if (index != -1)
 				laneSeqList[index].AddBox(tBox);
-			}
-			catch
+			else
 			{
 				LaneSeq laneSeq = new LaneSeq(tBox.exLane);
+				laneSeq.node = node;
 				laneSeqList.Add(laneSeq);
 				laneSeq.AddBox(tBox);
 			}

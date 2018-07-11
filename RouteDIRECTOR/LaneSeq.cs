@@ -8,7 +8,8 @@ namespace IRouteDirector
 	public class LaneSeq
 	{
 		public List<Box> boxList = new List<Box> { };
-		public int lane = 0;
+		public Int16 lane = 0;
+		public Int16 node;
  
 		public LaneSeq(Int16 tLane)
 		{
@@ -23,38 +24,12 @@ namespace IRouteDirector
 		public DivertCmd HanderReq(DivertReq divertReq)
 		{
 			int index;
-			try
-			{
-				index = boxList.FindIndex((Box mBox) =>
-				{
-					if (mBox.barcode == divertReq.codeStr)
-						return true;
-					else
-						return false;
-				});
-			}
-			catch
-			{
+			index = boxList.FindIndex(box => box.barcode == divertReq.codeStr);
+			if (index == -1)
 				return null;
-			}
 
 			int number;
-			try
-			{
-				number = boxList.FindIndex((Box mBox) =>
-				{
-					if (mBox.status == Box.BoxStatus.Missing)
-						return true;
-					else
-						return false;
-				});
-			}
-
-			catch(Exception e)
-			{
-				Log.log.Error("find another same box or the previous box was not be sorting success", e);
-				throw e;
-			}
+			number = boxList.FindIndex(box => box.status != Box.BoxStatus.Success);
 
 			if (number == index)
 			{
@@ -62,6 +37,9 @@ namespace IRouteDirector
 				return new DivertCmd(divertReq, boxList[index].exLane);
 			}
 			else
+			{
+				Log.log.Debug("node:" + node+" lane:" + lane + "|next box: No." + number + " "+ boxList[number].barcode + "|reject box: NO." +index + " " + divertReq.codeStr);
+			}
 				return null;
 
 

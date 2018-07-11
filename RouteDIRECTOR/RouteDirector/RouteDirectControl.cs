@@ -15,7 +15,8 @@ namespace RouteDirector
 	{
 		Thread receiveThread;
 		TCPSocket tcpSocket;
-		System.Timers.Timer heartTime;
+		System.Timers.Timer recHeartTime;
+		System.Timers.Timer sendHeartTime;
 
 		private Queue recMsgQuene = new Queue();
 		Semaphore recMsgCount = new Semaphore(0, 1000);
@@ -29,7 +30,8 @@ namespace RouteDirector
 		public RouteDirectControl() {
 			tcpSocket = new TCPSocket();
 			receiveThread = new Thread(ReceiveHandle) { IsBackground = true };
-			HeartTimerInit(heartBeatTime * 2 + 1);
+			RecHeartTimerInit(heartBeatTime * 2 + 1);
+			SendHeartTimerInit(heartBeatTime);
 		}
         /// <summary>
         /// 建立连接
@@ -41,53 +43,92 @@ namespace RouteDirector
 		{
 			
 			IPEndPoint ipe = new IPEndPoint(IPAddress.Parse("172.16.18.171"), Convert.ToInt32("3000"));
-			HeartTimerStart();
+			RecHeartTimerStart();
 			if (tcpSocket.ConnectServer(ipe) == 0)
 			{
 				receiveThread.Start();
                 SendStart();
 				online = true;
+				SendHeartTimerStart();
 				Log.log.Debug("EstablishConnection success");
 				return 0;
 			}
 			Log.log.Debug("EstablishConnection fail");
+			StopConnection();
 			return -1;
 		}
 
 		#region  心跳监视
-		private void HeartTimerReset()
-		{
-			heartTime.Stop();
-			heartTime.Start();
-			Log.log.Debug("Heartbeat reset");
-		}
 
-		private void HeartTimerInit(int s)
-		{
-			Log.log.Debug("Heartbeat init");
-			heartTime = new System.Timers.Timer();
-			heartTime.Elapsed += HeartTime_Elapsed;
-			heartTime.Interval = s*1000;
-			heartTime.AutoReset = false;
-			heartTime.Stop();
-		}
 
-		private void HeartTimerStart()
+		private void RecHeartTimerInit(int s)
 		{
-			Log.log.Debug("Heartbeat start");
-			heartTime.Start();
+			Log.log.Debug("Receive heartbeat init");
+			recHeartTime = new System.Timers.Timer();
+			recHeartTime.Elapsed += RecHeartTimer_Elapsed;
+			recHeartTime.Interval = s*1000;
+			recHeartTime.AutoReset = false;
+			recHeartTime.Stop();
 		}
-
-		private void HeartTime_Elapsed(object sender, System.Timers.ElapsedEventArgs e)
+		private void RecHeartTimerReset()
 		{
-			Log.log.Debug("Heartbeat break，break connection");
+			recHeartTime.Stop();
+			recHeartTime.Start();
+			Log.log.Debug("Receive heartbeat reset");
+		}
+		private void RecHeartTimerStop()
+		{
+			Log.log.Debug("Receive heartbeat stop");
+			recHeartTime.Stop();
+		}
+		private void RecHeartTimerStart()
+		{
+			Log.log.Debug("Receive heartbeat start");
+			recHeartTime.Start();
+		}
+		private void RecHeartTimer_Elapsed(object sender, System.Timers.ElapsedEventArgs e)
+		{
+			Log.log.Debug("Receive heartbeat break，break connection");
 			StopConnection();			
 		}
-		private void HeartTimeStop()
+
+
+		private void SendHeartTimerInit(int s)
+		{
+			Log.log.Debug("Send heartbeat init");
+			sendHeartTime = new System.Timers.Timer();
+			sendHeartTime.Elapsed += SendHeartTimer_Elapsed;
+			sendHeartTime.Interval = s * 1000;
+			sendHeartTime.AutoReset = true;
+			sendHeartTime.Stop();
+		}
+
+		private void SendHeartTimer_Elapsed(object sender, System.Timers.ElapsedEventArgs e)
+		{
+			HeartBeat heartBeat = new HeartBeat(heartBeatTime);
+			Log.log.Debug("Sned Heartbeat");
+			SendMsg(heartBeat);
+		}
+
+		private void SendHeartTimerStop()
 		{
 			Log.log.Debug("Heartbeat stop");
-			heartTime.Stop();
+			sendHeartTime.Stop();
 		}
+
+		private void SendHeartTimerStart()
+		{
+			Log.log.Debug("Heartbeat start");
+			sendHeartTime.Start();
+		}
+
+		private void SendHeartTimerReset()
+		{
+			sendHeartTime.Stop();
+			sendHeartTime.Start();
+			Log.log.Debug("Send heartbeat reset");
+		}
+
 		#endregion
 
 		/// <summary>
@@ -95,7 +136,8 @@ namespace RouteDirector
 		/// </summary>
 		public void StopConnection()
 		{
-			HeartTimeStop();
+			RecHeartTimerStop();
+			SendHeartTimerStop();
 			receiveThread.Abort();
 			//缺少对receive是否完成的判断
 			receiveThread = new Thread(ReceiveHandle) { IsBackground = true };
@@ -130,7 +172,7 @@ namespace RouteDirector
 				{
 					StopConnection();
 				}
-				HeartTimerReset();
+				RecHeartTimerReset();
 				PacketResolve(packetBuf);
 			}
 		}
@@ -172,16 +214,14 @@ namespace RouteDirector
 								foreach (MessageBase msg in packet.messageList)
 								{
 									if (msg.msgId == (Int16)MessageType.HeartBeat)
-									{
-										HeartBeat heartBeat = new HeartBeat(heartBeatTime);
-										SendMsg(heartBeat);
 										break;
-									}
 
 									if (msg.msgId == (Int16)MessageType.CommsErr)
 									{
 										Log.log.Debug("Get CommsErr");
 										StopConnection();
+										throw new Exception();
+										
 									}
 
 									if (msg.msgId == (Int16)MessageType.NodeAva)
@@ -222,13 +262,17 @@ namespace RouteDirector
 
 		private void SendStart()
 		{
-			Packet packet = new Packet();
-			HeartBeat heartBeat = new HeartBeat(heartBeatTime);
-			packet.AddMsg(heartBeat);
-			packet.AddCycleNum(0, 0);
-			tcpSocket.SendData(packet.GetBuf());
-			Log.log.Debug("Send start");
-			cycleNum = 1;
+			lock (sendLock)
+			{
+				Packet packet = new Packet();
+				HeartBeat heartBeat = new HeartBeat(heartBeatTime);
+				packet.AddMsg(heartBeat);
+				packet.AddCycleNum(0, 0);
+				tcpSocket.SendData(packet.GetBuf());
+				SendHeartTimerReset();
+				Log.log.Debug("Send start");
+				cycleNum = 1;
+			}
 		}
 
 
@@ -250,19 +294,17 @@ namespace RouteDirector
 
 		public void SendMsg(MessageBase msg)
 		{
-			lock (sendLock)
-			{
-				Packet packet = new Packet();
-				packet.AddCycleNum(cycleNum, ack);
+			Packet packet = new Packet();
+			packet.AddCycleNum(cycleNum, ack);
 
-				packet.AddMsg(msg);
+			packet.AddMsg(msg);
 
-				tcpSocket.SendData(packet.GetBuf());
-				Log.log.Debug("Send packet No." + cycleNum);
-				cycleNum++;
-				if (cycleNum > 99)
-					cycleNum = 1;			
-			}
+			tcpSocket.SendData(packet.GetBuf());
+			
+			Log.log.Debug("Send message Id: " + msg.msgId);
+			cycleNum++;
+			if (cycleNum > 99)
+				cycleNum = 1;			
 		}
 
 		public void FlushMsg()
